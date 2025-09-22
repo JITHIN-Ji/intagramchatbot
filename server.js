@@ -46,7 +46,7 @@ app.post('/webhook', (req, res) => {
   
   const body = req.body;
   
-  if (body.object === 'page') {
+  if (body.object === 'page' || body.object === 'instagram') {
     body.entry.forEach((entry) => {
       const webhookEvent = entry.messaging[0];
       console.log('Webhook event:', webhookEvent);
