@@ -7,6 +7,9 @@ const PORT = process.env.PORT || 3000;
 // Your verify token (create a random string)
 const VERIFY_TOKEN = 'your_secure_verify_token_12345';
 
+// ADD YOUR PAGE ACCESS TOKEN HERE
+const PAGE_ACCESS_TOKEN = 'EAALkgHsGfroBPo1XmiWOxVQosYjZBoGWdNDVgZBNpT5GRHvisuJTArOslobTpdZBCqBKZBaAhnQVygqrO87WltYkMvf1CFZAwN7VYe3iJF53kCqvO1TqqlQRZBO7zQMqPQt8hg6K8bK1rmcb3c360Qin4oZCairMkRUSwSp03A3cWe2o1fka1IlOCNR0VuyWxVZCq5ezrMfzVAZDZD'; // Replace with your actual token from Facebook
+
 app.use(bodyParser.json());
 
 // Webhook verification endpoint
@@ -57,6 +60,34 @@ app.post('/webhook', (req, res) => {
   }
 });
 
+// Function to send messages back to users
+async function sendMessage(recipientId, messageText) {
+  const url = `https://graph.facebook.com/v18.0/me/messages`;
+  
+  const messageData = {
+    recipient: { id: recipientId },
+    message: { text: messageText }
+  };
+  
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${PAGE_ACCESS_TOKEN}`
+      },
+      body: JSON.stringify(messageData)
+    });
+    
+    const result = await response.json();
+    console.log('Message sent successfully:', result);
+    return result;
+  } catch (error) {
+    console.error('Error sending message:', error);
+    return null;
+  }
+}
+
 // Function to handle incoming messages
 function handleMessage(event) {
   const senderId = event.sender.id;
@@ -64,8 +95,23 @@ function handleMessage(event) {
   
   console.log(`Message from ${senderId}: ${messageText}`);
   
-  // Here you would typically send a response back
-  // For now, just log the message
+  // Send an echo response back to the user
+  if (messageText) {
+    const responseText = `You said: "${messageText}"`;
+    sendMessage(senderId, responseText);
+  }
+  
+  // You can add more sophisticated logic here
+  // For example, different responses based on keywords:
+  /*
+  if (messageText.toLowerCase().includes('hello')) {
+    sendMessage(senderId, 'Hello! How can I help you today?');
+  } else if (messageText.toLowerCase().includes('help')) {
+    sendMessage(senderId, 'I can help you with various things. What do you need?');
+  } else {
+    sendMessage(senderId, `You said: "${messageText}"`);
+  }
+  */
 }
 
 // Health check endpoint
