@@ -10,7 +10,7 @@ console.log('Starting server on port:', PORT);
 const VERIFY_TOKEN = 'your_secure_verify_token_12345';
 
 // ADD YOUR PAGE ACCESS TOKEN HERE
-const PAGE_ACCESS_TOKEN = 'EAALkgHsGfroBPo1XmiWOxVQosYjZBoGWdNDVgZBNpT5GRHvisuJTArOslobTpdZBCqBKZBaAhnQVygqrO87WltYkMvf1CFZAwN7VYe3iJF53kCqvO1TqqlQRZBO7zQMqPQt8hg6K8bK1rmcb3c360Qin4oZCairMkRUSwSp03A3cWe2o1fka1IlOCNR0VuyWxVZCq5ezrMfzVAZDZD'; // Replace with your actual token from Facebook
+const PAGE_ACCESS_TOKEN = 'EAALkgHsGfroBPqdHm79ufBy5mfX6EpLzu0S2wBFTCUAqIibmvxDYD07zrsx8LEIZCr4VJmuvDnRdgGeX19Pf4CV3JZBtSFCsrdk8xJvnftwYNBSlHrjiHM5JAwhnweks99QgYDqU18QORD6M0N0vUqlP4Ow5CTxmnGSVU7PKjt7oQvZA3ERZA4QceIZCZC8cfMhIHctHl2eAZDZD'; // Replace with your actual token from Facebook
 
 app.use(bodyParser.json());
 
