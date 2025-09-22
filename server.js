@@ -2,7 +2,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
+
+console.log('Starting server on port:', PORT);
 
 // Your verify token (create a random string)
 const VERIFY_TOKEN = 'your_secure_verify_token_12345';
