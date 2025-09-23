@@ -1,6 +1,5 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-
 const app = express();
 const PORT = process.env.PORT || 10000;
 
@@ -9,8 +8,8 @@ console.log('Starting server on port:', PORT);
 // Your verify token (create a random string)
 const VERIFY_TOKEN = 'your_secure_verify_token_12345';
 
-// ADD YOUR PAGE ACCESS TOKEN HERE
-const PAGE_ACCESS_TOKEN = 'EAALkgHsGfroBPq0pMoi8gZBAX1BBtCkEY3eh8BVcEN67yy5aBwUiKUClbpscPMVYKLalZBOtNMXmutxzZCKEp9h8Xkb5clISSOCTyDpGuZC345cPxzCMJ7Ho76K2Sp8pP69Mu0r1twVhMG6ULfQ6lAV9UWSICntVZCSFlZBopsYdz8A7uQZCOr76WtZBNsaeZBDWDeAz53jj2sAZDZD'; // Replace with your actual token from Facebook
+// ADD YOUR NEW PAGE ACCESS TOKEN HERE (with Instagram permissions)
+const PAGE_ACCESS_TOKEN = 'EAALkgHsGfroBPhTelyuztUshmXqnVx520sUEfF0dCOY9shoeow9rcGEVFe5p2jJtnVaPnjm9aD346QBZB7hQ5abRZBmPKhLOYmCN016ZCYwl3mjVhucLZAaZCRuElBDVZA0ZAsXmCH2ZBag5jjW3rNmkcNNoLJ6YppWfi7ylXMwIiudFdMxIyc69cbAWKmA7DyAX3dZBPS8JAZBRDrW6ZChdoYJrL9zzvOPBuSvMJKWLQZDZDS'; // Replace with new token
 
 app.use(bodyParser.json());
 
@@ -46,24 +45,38 @@ app.post('/webhook', (req, res) => {
   
   const body = req.body;
   
-  if (body.object === 'page' || body.object === 'instagram') {
+  if (body.object === 'page') {
     body.entry.forEach((entry) => {
-      const webhookEvent = entry.messaging[0];
-      console.log('Webhook event:', webhookEvent);
+      // Handle Facebook Messenger
+      if (entry.messaging && entry.messaging.length > 0) {
+        const webhookEvent = entry.messaging[0];
+        console.log('Facebook Messenger event:', webhookEvent);
+        
+        if (webhookEvent.message) {
+          handleFacebookMessage(webhookEvent);
+        }
+      }
       
-      if (webhookEvent.message) {
-        handleMessage(webhookEvent);
+      // Handle Instagram Direct Messages
+      if (entry.changes && entry.changes.length > 0) {
+        entry.changes.forEach((change) => {
+          if (change.field === 'messages') {
+            console.log('Instagram message event:', change.value);
+            handleInstagramMessage(change.value);
+          }
+        });
       }
     });
     
     res.status(200).send('EVENT_RECEIVED');
   } else {
+    console.log('Unknown webhook object:', body.object);
     res.sendStatus(404);
   }
 });
 
-// Function to send messages back to users
-async function sendMessage(recipientId, messageText) {
+// Function to send Facebook messages
+async function sendFacebookMessage(recipientId, messageText) {
   const url = `https://graph.facebook.com/v18.0/me/messages`;
   
   const messageData = {
@@ -82,38 +95,71 @@ async function sendMessage(recipientId, messageText) {
     });
     
     const result = await response.json();
-    console.log('Message sent successfully:', result);
+    console.log('Facebook message sent successfully:', result);
     return result;
   } catch (error) {
-    console.error('Error sending message:', error);
+    console.error('Error sending Facebook message:', error);
     return null;
   }
 }
 
-// Function to handle incoming messages
-function handleMessage(event) {
+// Function to send Instagram messages
+async function sendInstagramMessage(recipientId, messageText) {
+  const url = `https://graph.facebook.com/v18.0/me/messages`;
+  
+  const messageData = {
+    recipient: { id: recipientId },
+    message: { text: messageText }
+  };
+  
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${PAGE_ACCESS_TOKEN}`
+      },
+      body: JSON.stringify(messageData)
+    });
+    
+    const result = await response.json();
+    console.log('Instagram message sent successfully:', result);
+    return result;
+  } catch (error) {
+    console.error('Error sending Instagram message:', error);
+    return null;
+  }
+}
+
+// Function to handle Facebook Messenger messages
+function handleFacebookMessage(event) {
   const senderId = event.sender.id;
   const messageText = event.message.text;
   
-  console.log(`Message from ${senderId}: ${messageText}`);
+  console.log(`Facebook message from ${senderId}: ${messageText}`);
   
-  // Send an echo response back to the user
   if (messageText) {
-    const responseText = `You said: "${messageText}"`;
-    sendMessage(senderId, responseText);
+    const responseText = `Facebook Bot: You said "${messageText}"`;
+    sendFacebookMessage(senderId, responseText);
   }
+}
+
+// Function to handle Instagram Direct Messages
+function handleInstagramMessage(messageData) {
+  console.log('Processing Instagram message:', messageData);
   
-  // You can add more sophisticated logic here
-  // For example, different responses based on keywords:
-  /*
-  if (messageText.toLowerCase().includes('hello')) {
-    sendMessage(senderId, 'Hello! How can I help you today?');
-  } else if (messageText.toLowerCase().includes('help')) {
-    sendMessage(senderId, 'I can help you with various things. What do you need?');
-  } else {
-    sendMessage(senderId, `You said: "${messageText}"`);
+  // Instagram message structure is different
+  if (messageData.from && messageData.message) {
+    const senderId = messageData.from.id;
+    const messageText = messageData.message;
+    
+    console.log(`Instagram message from ${senderId}: ${messageText}`);
+    
+    if (messageText) {
+      const responseText = `Instagram Bot: You said "${messageText}"`;
+      sendInstagramMessage(senderId, responseText);
+    }
   }
-  */
 }
 
 // Health check endpoint
