@@ -9,7 +9,7 @@ console.log('Starting server on port:', PORT);
 const VERIFY_TOKEN = 'your_secure_verify_token_12345';
 
 // ADD YOUR NEW PAGE ACCESS TOKEN HERE (with Instagram permissions)
-const PAGE_ACCESS_TOKEN = 'EAALkgHsGfroBPhTelyuztUshmXqnVx520sUEfF0dCOY9shoeow9rcGEVFe5p2jJtnVaPnjm9aD346QBZB7hQ5abRZBmPKhLOYmCN016ZCYwl3mjVhucLZAaZCRuElBDVZA0ZAsXmCH2ZBag5jjW3rNmkcNNoLJ6YppWfi7ylXMwIiudFdMxIyc69cbAWKmA7DyAX3dZBPS8JAZBRDrW6ZChdoYJrL9zzvOPBuSvMJKWLQZDZDS'; // Replace with new token
+const PAGE_ACCESS_TOKEN = 'EAALkgHsGfroBPjXHx2T17nicpTwRPHRgHkmGiRjuvGTwQ6zibDhkNGgOsf7UbSKVaYzA46A8B4bnRmFMbov5iSez9RfMQMXFY4y0M5ZAdx5sdApJLtdXXS2vVgY8Q8lz43OrP0ZAV7gGjgj2FBcGTajezXZCgGXfnyUmGZBWHqLvjUO9KHE2ZAt5KpOhG5uzFZCNnhzBjfDZBCb55eO9pZBx0JjjfNZAQD4Cn6pkqvHo9ZC3yevQEZD'; // Replace with new token
 
 app.use(bodyParser.json());
 
